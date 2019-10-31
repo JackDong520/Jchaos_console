@@ -47,6 +47,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <EditText
+            android:id="@+id/CmdEditTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="输入你要执行的命令" />
+
+        <TextView
+            android:id="@+id/CmdShowTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/ExecCmdButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="执行命令行" />
+
 
     </LinearLayout>
 

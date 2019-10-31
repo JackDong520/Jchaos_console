@@ -14,5 +14,9 @@ public class Config {
     public static final int Result_Code_KeyLoggerNotOpen = 2003;
     public static final int Result_Code_ReturnKeyLogger = 2004;
 
+    public static final int Request_Code_Result_Code_Cmd = 6001;
+
+
+
 }
 

