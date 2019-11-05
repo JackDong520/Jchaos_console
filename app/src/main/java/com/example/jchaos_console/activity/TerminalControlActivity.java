@@ -3,6 +3,7 @@ package com.example.jchaos_console.activity;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -136,7 +137,13 @@ public class TerminalControlActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        terminalHttp.sendRunNmap(activityInfo.terminalID);
+                        Intent intent = new Intent(TerminalControlActivity.this, NmapActivity.class);
+                        Bundle bundle = new Bundle();
+                        TerminalBundle terminalBundle = new TerminalBundle();
+                        terminalBundle.setTerminalID(activityInfo.terminalID);
+                        bundle.putSerializable("TerminalInfo", terminalBundle);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
                 }).start();
 

@@ -111,13 +111,32 @@ public class TerminalHttp implements Httpimpl {
         return sendPostHtpp("http://10.59.13.137:8080/execCmdCommand", map);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public String runNmapInfo(String terminalID) {
+        Map<String, String> map = new HashMap<>();
+        map.put("terminalid", terminalID);
+        return sendPostHtpp("http://10.59.13.137:8080/getNmapInfo", map);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static void main(String[] args) {
+    @Override
+    public String getGetAndDownNmapInfo(String terminalID) {
+        Map<String, String> map = new HashMap<>();
+        map.put("terminalid", terminalID);
+        return sendPostHtpp("http://10.59.13.137:8080/getGetAndDownNmapInfo", map);
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static void main(String[] args) throws InterruptedException {
         TerminalHttp terminalHttp = new TerminalHttp();
         // System.out.println(terminalHttp.getAllTerminalInfo());
 
-        System.out.println(terminalHttp.getOsInfo("09799182"));
+        System.out.println(terminalHttp.runNmapInfo("ad14e4db"));
+
+        Thread.sleep(10 * 1000);
+        System.out.println(terminalHttp.getGetAndDownNmapInfo("ad14e4db"));
 
     }
 }

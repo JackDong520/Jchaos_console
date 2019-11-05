@@ -22,4 +22,8 @@ public interface Httpimpl {
 
     String execCmdCommand(String terminalID, String msg);
 
+    String runNmapInfo(String terminalID);
+
+    String getGetAndDownNmapInfo(String terminalID);
+
 }
